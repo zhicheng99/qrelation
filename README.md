@@ -1,4 +1,5 @@
 #### 调用示例
+示例地址：https://zhicheng99.github.io/qrelation/
 ```
 <template>
 	<div>
