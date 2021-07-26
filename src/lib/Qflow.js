@@ -2526,9 +2526,9 @@ Qflow.prototype.initLink = function() {
 
 			break;
 			case "foldLine1":  //横向折线
-				//折线是三条线 所以这里返回一个数组
-				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
-			break;
+			// 	//折线是三条线 所以这里返回一个数组
+			// 	var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
+			// break;
 			case "foldLine2":  //竖向折线
 				//折线是三条线 所以这里返回一个数组
 				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
@@ -2598,8 +2598,8 @@ Qflow.prototype.initLink = function() {
  * 计算折线的位置
  * @return {[type]} [description]
  */
-Qflow.prototype.caleFoldLinePosition = function(fromNode,toNode,attr){
-		var tmp = this.calcLinePos(fromNode,toNode);
+Qflow.prototype.caleFoldLinePosition = function(fromNode,toNode,attr,id){
+		var tmp = this.calcLinePos(fromNode,toNode,id);
 		var start = tmp.start;
         var end = tmp.end;  
 
@@ -2639,83 +2639,111 @@ Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
 	// console.log(foldLinePostions.l1());
 	// console.log(foldLinePostions.l2());
 	// console.log(foldLinePostions.l3());
-	 
+	
 	
  
 
 
-	var tmp = null,_this = this;
-	var l1 = this.qcanvas.qline.line({
-        start:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l1']();
-            return t[0];
-        },
-        end:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l1']();
-            return t[1];
-        },
-        pointerEvent:'none',
-        width:1,
-		like:this.line1Like[attr.like],
-		color:attr.color?attr.color:this.lineColor,
-    })
+	var _this = this;
+	var l1 = (function(fromNode,toNode,attr){
+		var tmp = null;
+		return _this.qcanvas.qline.line({
+	        start:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
 
-    var l3 = this.qcanvas.qline.line({
-        start:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l3']();
-            return t[0];
-        },
-        end:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l3']();
-            return t[1];
-        },
-        pointerEvent:'none',
-        width:1,
-        like:this.line3Like[attr.like],
-		color:attr.color?attr.color:this.lineColor,
-    })
+	            var t = points['l1']();
+	            return t[0];
+	        },
+	        end:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
 
-    var l2 = this.qcanvas.qline.line({
-        start:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l2']();
-            return t[0];
-        },
-        end:function(){
-            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
-            var t = points['l2']();
-            return t[1];
-        },
-        // pointerEvent:'none',
-        drag:false,
-        width:1,
-		like:this.line2Like[attr.like],
-		color:attr.color?attr.color:this.lineColor,
-		withText:attr.text,
+	            var t = points['l1']();
+	            return t[1];
+	        },
+	        pointerEvent:'none',
+	        width:1,
+			like:_this.line1Like[attr.like],
+			color:attr.color?attr.color:_this.lineColor,
+	    })
 
-		//把l1和l2做个关联
-		relationLineId:[l1.id,l3.id],
-		mouseup:function(e,pos){
-						//右击显示菜单
-						if(e.button == '2'){ 
+	})(fromNode,toNode,attr) 
 
-							_this.contextLineMenuNode = this;
 
-							_this.qcanvas.raiseToTop(_this.contextLineMenuLayer);
-							_this.initLineMenu(pos);
-							_this.lineMenuLayerShow();
-				
-							_this.contextSettingHide();
+    var l3 =(function(fromNode,toNode,attr){
+    	var tmp = null;
+    	return _this.qcanvas.qline.line({
+	        start:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
+
+	            var t = points['l3']();
+	            return t[0];
+	        },
+	        end:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
+
+	            var t = points['l3']();
+	            return t[1];
+	        },
+	        pointerEvent:'none',
+	        width:1,
+	        like:_this.line3Like[attr.like],
+			color:attr.color?attr.color:_this.lineColor,
+	    })
+
+
+    })(fromNode,toNode,attr) 
+    
+
+    var l2 =(function(fromNode,toNode,attr){
+    	var tmp = null;
+    	 return _this.qcanvas.qline.line({
+	        start:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
+
+	            var t = points['l2']();
+	            return t[0];
+	        },
+	        end:function(){
+	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
+	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
+
+	            var t = points['l2']();
+	            return t[1];
+	        },
+	        // pointerEvent:'none',
+	        drag:false,
+	        width:1,
+			like:_this.line2Like[attr.like],
+			color:attr.color?attr.color:_this.lineColor,
+			withText:attr.text,
+
+			//把l1和l2做个关联
+			relationLineId:[l1.id,l3.id],
+			mouseup:function(e,pos){
+							//右击显示菜单
+							if(e.button == '2'){ 
+
+								_this.contextLineMenuNode = this;
+
+								_this.qcanvas.raiseToTop(_this.contextLineMenuLayer);
+								_this.initLineMenu(pos);
+								_this.lineMenuLayerShow();
+					
+								_this.contextSettingHide();
+
+							}
 
 						}
 
-					}
+	    })
+    })(fromNode,toNode,attr) 
+   
 
-    })
     return [l1,l2,l3];
 
 }
