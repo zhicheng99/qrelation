@@ -61,9 +61,43 @@ function Qflow(options){
 	this.childNodeBorderColor = '#70BDC4';
 	this.containerFillColor = "#9093DC";
 
+
+
+	//折线的配置项
+	this.line1Like = {
+		'-':'-',
+		'--':'--',
+		'->':'-',
+		'-->':'--',
+		'<-':'<-',
+		'<--':'<--',
+		'<->':'<-',
+		'<-->':'<--'
+	}
+	this.line2Like = {
+		'-':'-',
+		'--':'--',
+		'->':'-',
+		'-->':'--',
+		'<-':'-',
+		'<--':'--',
+		'<->':'-',
+		'<-->':'--'
+	}
+	this.line3Like = {
+		'-':'-',
+		'--':'--',
+		'->':'->',
+		'-->':'-->',
+		'<-':'-',
+		'<--':'--',
+		'<->':'->',
+		'<-->':'-->'
+	}
+
 	this.init();
 
-	console.log(this.qcanvas.elements);
+	// console.log(this.qcanvas.elements);
  
 }
 Qflow.prototype.init = function() {
@@ -188,7 +222,21 @@ Qflow.prototype.modiLineTitle = function(v) {
 };
 Qflow.prototype.modiLineLike = function(v) { 
 
-	this.contextLineMenuNode.setLike(v);
+
+	if(this.contextLineMenuNode.relationLineId){  //折线
+
+
+		var l1 = this.lineLayer.getEleById(this.contextLineMenuNode.relationLineId[0]);
+		var l3 = this.lineLayer.getEleById(this.contextLineMenuNode.relationLineId[1]);
+ 
+
+		l1.setLike(this.line1Like[v]);
+		l3.setLike(this.line3Like[v]);
+		this.contextLineMenuNode.setLike(this.line2Like[v]);
+
+	}else{
+		this.contextLineMenuNode.setLike(v);
+	}
 
 
 	var json = this.getLineJsonByNodeId(this.contextLineMenuNode.id);
@@ -240,8 +288,9 @@ Qflow.prototype.initLineModiTitleNode = function() {
 	d.style.height = h+'px';
 	d.style.display = 'block';
  
-
+	console.log(this.contextLineMenuNode);
 	this.modiTitleObj = this.lineLayer.getEleById(this.contextLineMenuNode.withTextId);
+	console.log(this.modiTitleObj);
 	d.value = this.modiTitleObj.text;
  
 
@@ -1594,7 +1643,6 @@ Qflow.prototype.initChildPosition = function() {
 	
 };
 Qflow.prototype.reSizeByInitData = function() {
-	var _this = this;
 
 	if(this.options.initData === null){
 		return;
@@ -1608,7 +1656,7 @@ Qflow.prototype.reSizeByInitData = function() {
 	    //取以下两个组的最大值
 	    //x+元素宽
 	    //y+元素高
-	    var x=[],y=[];
+	    var _this = this,x=[],y=[];
 		this.options.initData.node.map(function(item){
 
 			if(item.nodeType == 'container'){
@@ -2120,6 +2168,7 @@ Qflow.prototype.calcLinePos = function(A,B,nodeId) {
 	}
 
 	return this.lineCache['"'+nodeId+'"'].position;
+	// return F();
 
 };
 Qflow.prototype.solveLink = function() {
@@ -2476,6 +2525,14 @@ Qflow.prototype.initLink = function() {
 				});
 
 			break;
+			case "foldLine1":  //横向折线
+				//折线是三条线 所以这里返回一个数组
+				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
+			break;
+			case "foldLine2":  //竖向折线
+				//折线是三条线 所以这里返回一个数组
+				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
+			break;
 		}
 
 
@@ -2521,15 +2578,147 @@ Qflow.prototype.initLink = function() {
 	}
 
 
-		item.lineId = tmp.id;
-		// _this.lineCache[tmp.id] = tmp;
+		if(_this.qcanvas.isArr(tmp)){
+			item.lineId = tmp[1].id;
+			_this.lineLayer.push(tmp[0],tmp[1],tmp[2]);
 
-		_this.lineLayer.push(tmp);
+		}else{
+
+			item.lineId = tmp.id;
+			_this.lineLayer.push(tmp);
+		}
+		// _this.lineCache[tmp.id] = tmp;
 
 
 	})
 	
 }; 
+
+/**
+ * 计算折线的位置
+ * @return {[type]} [description]
+ */
+Qflow.prototype.caleFoldLinePosition = function(fromNode,toNode,attr){
+		var tmp = this.calcLinePos(fromNode,toNode);
+		var start = tmp.start;
+        var end = tmp.end;  
+
+        var percent = attr.disPercent?attr.disPercent:0.5;
+
+        if(attr.type == 'foldLine1'){
+			//模向模式
+	        return {
+	            'l1':function(){return [start,[start[0],(end[1]-start[1])*percent+start[1]]]},
+	            'l2':function(){return [[start[0],(end[1]-start[1])*percent+start[1]],[end[0],(end[1]-start[1])*percent+start[1]]]},
+	            'l3':function(){return [[end[0],(end[1]-start[1])*percent+start[1]],end]}
+	        }
+        }
+
+        if(attr.type == 'foldLine2'){
+        	//竖向模式
+        	return {
+                'l1':function(){return [start,[(end[0]-start[0])*percent+start[0],start[1]]]},
+                'l2':function(){return [[(end[0]-start[0])*percent+start[0],start[1]],[(end[0]-start[0])*percent+start[0],end[1]]]},
+                'l3':function(){return [[(end[0]-start[0])*percent+start[0],end[1]],end]}
+            }
+        }
+ 
+       
+}
+
+/**
+ * 创建折线
+ * @param  {[type]} fromNode [description]
+ * @param  {[type]} toNode   [description]
+ * @param  {[type]} lineId   [description]
+ * @return {[type]}          [description]
+ */
+Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
+	// var foldLinePostions = this.caleFoldLinePosition(fromNode,toNode);
+
+	// console.log(foldLinePostions.l1());
+	// console.log(foldLinePostions.l2());
+	// console.log(foldLinePostions.l3());
+	 
+	
+ 
+
+
+	var tmp = null,_this = this;
+	var l1 = this.qcanvas.qline.line({
+        start:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l1']();
+            return t[0];
+        },
+        end:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l1']();
+            return t[1];
+        },
+        pointerEvent:'none',
+        width:1,
+		like:this.line1Like[attr.like],
+		color:attr.color?attr.color:this.lineColor,
+    })
+
+    var l3 = this.qcanvas.qline.line({
+        start:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l3']();
+            return t[0];
+        },
+        end:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l3']();
+            return t[1];
+        },
+        pointerEvent:'none',
+        width:1,
+        like:this.line3Like[attr.like],
+		color:attr.color?attr.color:this.lineColor,
+    })
+
+    var l2 = this.qcanvas.qline.line({
+        start:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l2']();
+            return t[0];
+        },
+        end:function(){
+            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr):tmp;
+            var t = points['l2']();
+            return t[1];
+        },
+        // pointerEvent:'none',
+        drag:false,
+        width:1,
+		like:this.line2Like[attr.like],
+		color:attr.color?attr.color:this.lineColor,
+		withText:attr.text,
+
+		//把l1和l2做个关联
+		relationLineId:[l1.id,l3.id],
+		mouseup:function(e,pos){
+						//右击显示菜单
+						if(e.button == '2'){ 
+
+							_this.contextLineMenuNode = this;
+
+							_this.qcanvas.raiseToTop(_this.contextLineMenuLayer);
+							_this.initLineMenu(pos);
+							_this.lineMenuLayerShow();
+				
+							_this.contextSettingHide();
+
+						}
+
+					}
+
+    })
+    return [l1,l2,l3];
+
+}
 Qflow.prototype.updateInitData = function(obj,jsonObj) {
 	jsonObj.x = obj.start[0];
 	jsonObj.y = obj.start[1];

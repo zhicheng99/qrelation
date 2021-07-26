@@ -25,10 +25,58 @@ export default {
   },
   data() {
     return { 
-      jsonData:[{
-          node:[],
-          link:[]
-        }]
+      // jsonData:[{
+      //     node:[],
+      //     link:[]
+      //   }],
+      jsonData:[
+
+        {
+          node:[ 
+          { 
+            id:4,
+            nodeType:'node', //普通节点
+            x:200,
+            y:50,
+            text:'标题1',
+            attr:{
+               borderColor:'#7EC8CE', 
+               color:'#fff', 
+               fillColor:'#585DCB',
+               dashed:false, 
+            }
+          },
+          { 
+            id:5,
+            nodeType:'node', //普通节点
+            x:400,
+            y:200,
+            text:'标题2',
+            attr:{
+               borderColor:'#7EC8CE', 
+               color:'#fff', 
+               fillColor:'#585DCB',
+               dashed:false, 
+            }
+          }
+
+        ],
+        link:[   //连线关系   
+          {
+            fromId:4,
+            toId:5,
+            attr:{
+              // type:'bezierCurve', //三线曲线
+              type:'foldLine2', //三线曲线
+
+              text:'连线关系2',
+              like:'<-->'
+            }
+          }
+        ]
+        }
+
+      ]
     }
   },
   methods: { 

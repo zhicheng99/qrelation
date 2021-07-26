@@ -97,6 +97,14 @@ import Vue from 'vue';
 	  				{
 		  				name:'三次曲线',
 		  				value:'bezierCurve'
+	  				},
+	  				{
+		  				name:'折线(横向)',
+		  				value:'foldLine1'
+	  				},
+	  				{
+		  				name:'折线(竖向)',
+		  				value:'foldLine2'
 	  				}
 	  			],
 	  			lineLike:'',
@@ -110,12 +118,20 @@ import Vue from 'vue';
 	  					value:'->'
 	  				},
 	  				{
+	  					name:'<-',
+	  					value:'<-'
+	  				},
+	  				{
 	  					name:'<->',
 	  					value:'<->'
 	  				},
 	  				{
 	  					name:'--',
 	  					value:'--'
+	  				},
+	  				{
+	  					name:'<--',
+	  					value:'<--'
 	  				},
 	  				{
 	  					name:'-->',
