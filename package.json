@@ -14,7 +14,7 @@
   "license": "ISC",
   "dependencies": {
     "element-ui": "^2.13.0",
-    "qcanvas": "^1.0.95",
+    "qcanvas": "^1.0.96",
     "vue": "^2.5.11"
   },
   "devDependencies": {

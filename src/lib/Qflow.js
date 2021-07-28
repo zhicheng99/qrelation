@@ -418,7 +418,19 @@ Qflow.prototype.delLineNode = function() {
 	if(typeof this.contextLineMenuNode.withTextId != 'undefined'){
 		var textObj = this.lineLayer.getEleById(this.contextLineMenuNode.withTextId);
 		this.lineLayer.removeEle(textObj);
+
+		this.lineLayer.removeEleById(this.contextLineMenuNode.withTextId);
+
 	}
+
+	//如果是折线 需要把关联线也一并删除
+	if(typeof this.contextLineMenuNode.relationLineId != 'undefined'){
+
+		this.contextLineMenuNode.relationLineId.forEach(function(item){
+			_this.lineLayer.removeEleById(item);
+		})
+	}
+
 	
 	this.lineLayer.removeEle(this.contextLineMenuNode);
 
@@ -663,7 +675,6 @@ Qflow.prototype.getLineJsonByNodeId = function(nodeId) {
  		return null;
  	}
 };
-
 Qflow.prototype.getDelLineObj = function(nodeObj) {
 	var _this = this;
 	//在this.options.initData.link中找到与nodeObj节点有关系的线
@@ -679,8 +690,14 @@ Qflow.prototype.getDelLineObj = function(nodeObj) {
 
 				lineObj.push(_this.getLineObj(l.lineId));
 
+				// //如果是折线 需要把关联的线也一并返回
+				// if(typeof l.relationLineId != 'undefined'){
+				// 	l.relationLineId.forEach(function(r){
+				// 		console.log(r);
+				// 		lineObj.push(_this.lineLayer.getEleById(r));
+				// 	})
+				// }
 			}
-
 		})
 
 	})
@@ -799,8 +816,8 @@ Qflow.prototype.delNode = function() {
 	// console.log(delNodeObj);
 
 	var delLineObj = this.getDelLineObj(delNodeObj); //连线对象(在this.lineLayer上)
-	var delWithTextObj = this.getWithTextObj(delLineObj); //连线上的文字对象（在this.lineLayer上）
-	var delTextObj = this.getDelTextObj(delNodeObj); //节点上的文字对象
+	// var delWithTextObj = this.getWithTextObj(delLineObj); //连线上的文字对象（在this.lineLayer上）
+	// var delTextObj = this.getDelTextObj(delNodeObj); //节点上的文字对象
 
 
 	// console.log('需要删除的line');
@@ -820,16 +837,29 @@ Qflow.prototype.delNode = function() {
 
 
 	//删除对象 （顺序：连线上的文字->连线->node上的标题文字->node）
-	delWithTextObj.forEach(function(item){
-		_this.lineLayer.removeEle(item);
-	})
+	// delWithTextObj.forEach(function(item){
+	// 	_this.lineLayer.removeEleById(item.id);
+	// })
 
 	delLineObj.forEach(function(item){
-		_this.lineLayer.removeEle(item);
+
+		//先删线上的文字
+		if(typeof item.withTextId != 'undefined'){
+			_this.lineLayer.removeEleById(item.withTextId);
+		}
+
+		//先删除关联的线
+		if(typeof item.relationLineId != 'undefined'){
+			item.relationLineId.forEach(function(r){
+				_this.lineLayer.removeEleById(r);
+			})
+		}
+
+		_this.lineLayer.removeEleById(item.id);
 	})
-	delTextObj.forEach(function(item){
-		_this.qcanvas.removeEle(item);
-	})
+	// delTextObj.forEach(function(item){
+	// 	_this.qcanvas.removeEleById(item.id);
+	// })
 
 	// console.log(delNodeObj)  
 	delNodeObj.forEach(function(item){
@@ -879,6 +909,13 @@ Qflow.prototype.delNode = function() {
 
 			}
 		}
+
+		//先删除node上的文字
+		if(typeof item.ownerId !== 'undefined'){
+			_this.lineLayer.removeEleById(item.ownerId);
+		}
+
+
 		_this.qcanvas.removeEle(item);
 	})
 
