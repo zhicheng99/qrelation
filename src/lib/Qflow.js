@@ -57,9 +57,10 @@ function Qflow(options){
 	};
 
 	this.lineColor = '#FF912D';
-	this.childNodeFillColor = '#585DCB';
-	this.childNodeBorderColor = '#70BDC4';
-	this.containerFillColor = "#9093DC";
+	this.childNodeFillColor = '#eee';
+	this.childNodeBorderColor = '#3c3c3c';
+	this.containerFillColor = "#ddd";
+	this.textColor="#333"
 
 
 
@@ -861,7 +862,7 @@ Qflow.prototype.delNode = function() {
 	// 	_this.qcanvas.removeEleById(item.id);
 	// })
 
-	// console.log(delNodeObj)  
+	console.log(delNodeObj)  
 	delNodeObj.forEach(function(item){
 		if(typeof item.ownerId !='undefined'){ 
 		//删除的是容器里的节点 
@@ -913,6 +914,11 @@ Qflow.prototype.delNode = function() {
 		//先删除node上的文字
 		if(typeof item.ownerId !== 'undefined'){
 			_this.lineLayer.removeEleById(item.ownerId);
+		} 
+
+		//tip类型删除
+		if(typeof item.withTextId !=='undefined'){
+			_this.qcanvas.removeEleById(item.withTextId);
 		}
 
 
@@ -2811,7 +2817,7 @@ Qflow.prototype.initNodeTitle = function(jsonObj,nodeObj) {
 			},
 			text:jsonObj.text,
 			pointerEvent:'none',
-			color:jsonObj.attr && jsonObj.attr.color?jsonObj.attr.color:'#000',
+			color:jsonObj.attr && jsonObj.attr.color?jsonObj.attr.color:_this.textColor,
 			fontSize:'12px',
 			ownerId:jsonObj.nodeId
 
@@ -3518,6 +3524,7 @@ Qflow.prototype.initTipText = function(obj,qobj) {
 			    pointerEvent:'none',
 				ownerId:obj.nodeId
 			})
+		qobj.withTextId = t.id;
 
 		this.qnodes.push(t);
 
@@ -3715,7 +3722,7 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 		childNodes:[], //qcanvas元素对象
 		attr:{
 			 titlePosition:'top-center',
-			 color:'#fff', //标题文字的颜色
+			 color:this.textColor, //标题文字的颜色
 			 borderColor:this.containerFillColor,
 			 fillColor:this.containerFillColor,
 			 dashed:false, 
@@ -3807,7 +3814,7 @@ Qflow.prototype.inSertToContainer = function(obj,aim,text) {
 			nodeType:'node',
 			text:text?text:'我是新来的',
 			attr:{
-				color:'#fff'
+				color:this.textColor
 			}
 	}
 
@@ -3886,7 +3893,7 @@ Qflow.prototype.addNode = function(obj,title) {
 			text:title?title:'标题',
 			attr:{
 				 borderColor:this.childNodeBorderColor, 
-				 color:'#fff',
+				 color:this.textColor,
 				 fillColor:this.childNodeFillColor,
 				 dashed:false, 
 			}

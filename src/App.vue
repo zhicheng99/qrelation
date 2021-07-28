@@ -40,9 +40,9 @@ export default {
             y:50,
             text:'标题1',
             attr:{
-               borderColor:'#7EC8CE', 
-               color:'#fff', 
-               fillColor:'#585DCB',
+               borderColor:'#3c3c3c', 
+               color:'#333', 
+               fillColor:'#eee',
                dashed:false, 
             }
           },
