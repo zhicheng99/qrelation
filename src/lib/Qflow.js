@@ -60,6 +60,7 @@ function Qflow(options){
 	this.childNodeFillColor = '#eee';
 	this.childNodeBorderColor = '#3c3c3c';
 	this.containerFillColor = "#ddd";
+	this.containerBorderColor = '#3c3c3c';
 	this.textColor="#333"
 
 
@@ -289,9 +290,9 @@ Qflow.prototype.initLineModiTitleNode = function() {
 	d.style.height = h+'px';
 	d.style.display = 'block';
  
-	console.log(this.contextLineMenuNode);
+	// console.log(this.contextLineMenuNode);
 	this.modiTitleObj = this.lineLayer.getEleById(this.contextLineMenuNode.withTextId);
-	console.log(this.modiTitleObj);
+	// console.log(this.modiTitleObj);
 	d.value = this.modiTitleObj.text;
  
 
@@ -862,7 +863,7 @@ Qflow.prototype.delNode = function() {
 	// 	_this.qcanvas.removeEleById(item.id);
 	// })
 
-	console.log(delNodeObj)  
+	// console.log(delNodeObj)  
 	delNodeObj.forEach(function(item){
 		if(typeof item.ownerId !='undefined'){ 
 		//删除的是容器里的节点 
@@ -1229,7 +1230,7 @@ Qflow.prototype.initDelBtn = function() {
 
 };
 Qflow.prototype.modiTitle = function(v) {
-	console.log(this.modiTitleObj);
+	// console.log(this.modiTitleObj);
 	if(this.modiTitleObj){
 		this.modiTitleObj.setText(v);
 	}
@@ -1244,7 +1245,7 @@ Qflow.prototype.modiTitle = function(v) {
 
  	//根据内容 动态改变input位置和宽度
  	var textPolyPoints = this.modiTitleObj.polyPoints();
- 	console.log(textPolyPoints);
+ 	// console.log(textPolyPoints);
  	var tmp = this.modiTitleObj.formatText.call(this,this.modiTitleObj);
 
  	var w = Math.max.apply(null,tmp.width);
@@ -3650,7 +3651,7 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 		 // height:this.containerNodeHeight,
 		 width:(attrObj && attrObj.width)?attrObj.width:this.containerNodeWidth,
 		height:(attrObj && attrObj.height)?attrObj.height:this.containerNodeHeight,
-		 borderColor:this.containerFillColor, 
+		 borderColor:this.containerBorderColor, 
 		 fillColor:this.containerFillColor,
 		 dashed:false,  
 
@@ -3723,7 +3724,7 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 		attr:{
 			 titlePosition:'top-center',
 			 color:this.textColor, //标题文字的颜色
-			 borderColor:this.containerFillColor,
+			 borderColor:this.containerBorderColor,
 			 fillColor:this.containerFillColor,
 			 dashed:false, 
 		}
@@ -3992,7 +3993,6 @@ Qflow.prototype.inContainer = function(obj) {
 };
 
 Qflow.prototype.addEle = function(obj) {
-
 	switch(obj.id){
 		case '-1':
 			var id = this.addContainer(obj);
