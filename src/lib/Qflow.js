@@ -2563,9 +2563,6 @@ Qflow.prototype.initLink = function() {
 
 			break;
 			case "foldLine1":  //横向折线
-			// 	//折线是三条线 所以这里返回一个数组
-			// 	var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
-			// break;
 			case "foldLine2":  //竖向折线
 				//折线是三条线 所以这里返回一个数组
 				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
@@ -2676,15 +2673,10 @@ Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
 	// console.log(foldLinePostions.l1());
 	// console.log(foldLinePostions.l2());
 	// console.log(foldLinePostions.l3());
-	
-	
- 
-
-
 	var _this = this;
-	var l1 = (function(fromNode,toNode,attr){
-		var tmp = null;
-		return _this.qcanvas.qline.line({
+	var tmp = null;
+
+	var l1 =  _this.qcanvas.qline.line({
 	        start:function(){
 	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
 	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
@@ -2704,13 +2696,7 @@ Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
 			like:_this.line1Like[attr.like],
 			color:attr.color?attr.color:_this.lineColor,
 	    })
-
-	})(fromNode,toNode,attr) 
-
-
-    var l3 =(function(fromNode,toNode,attr){
-    	var tmp = null;
-    	return _this.qcanvas.qline.line({
+	var l3 = _this.qcanvas.qline.line({
 	        start:function(){
 	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
 	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
@@ -2730,14 +2716,7 @@ Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
 	        like:_this.line3Like[attr.like],
 			color:attr.color?attr.color:_this.lineColor,
 	    })
-
-
-    })(fromNode,toNode,attr) 
-    
-
-    var l2 =(function(fromNode,toNode,attr){
-    	var tmp = null;
-    	 return _this.qcanvas.qline.line({
+	var l2 = _this.qcanvas.qline.line({
 	        start:function(){
 	            var points = tmp === null?_this.caleFoldLinePosition(fromNode,toNode,attr,this.id):tmp;
 	            // var points = _this.caleFoldLinePosition(fromNode,toNode,attr);
@@ -2778,7 +2757,6 @@ Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
 						}
 
 	    })
-    })(fromNode,toNode,attr) 
    
 
     return [l1,l2,l3];
