@@ -99,7 +99,7 @@ function Qflow(options){
 
 	this.init();
 
-	console.log(this.qcanvas.elements);
+	// console.log(this.qcanvas.elements);
  
 }
 Qflow.prototype.init = function() {
@@ -130,10 +130,7 @@ Qflow.prototype.init = function() {
 	//点击设置按钮显示半透明覆盖层
 	// this.initContextCover();
 
-
-	//初始化设置按钮（鼠标划过元素时显示）
-	this.settingIco = null;
-	this.initSettingIco();
+ 
 
 
 	//节点右键菜单
@@ -449,7 +446,7 @@ Qflow.prototype.initLineDelBtn = function() {
 			fillColor:'#fff',
 			drag:false,  
 			mouseup:function(){
-				console.log('del');
+				// console.log('del');
 				//删除操作
 				_this.delLineNode();
  				
@@ -814,8 +811,8 @@ Qflow.prototype.delNode = function() {
 		delNodeObj.push(this.getNodeObj(nodeJson.nodeId));
 
 	}
-	console.log('需要删除的node');
-	console.log(delNodeObj);
+	// console.log('需要删除的node');
+	// console.log(delNodeObj);
 
 	var delLineObj = this.getDelLineObj(delNodeObj); //连线对象(在this.lineLayer上)
 	// var delWithTextObj = this.getWithTextObj(delLineObj); //连线上的文字对象（在this.lineLayer上）
@@ -974,7 +971,7 @@ Qflow.prototype.cloneNode = function() {
 
 
 	if(nodeJsonObj.nodeType == 'tip'){
-		console.log('clone tip');
+		// console.log('clone tip');
 		this.cloneTipNode();
 	}
 
@@ -1003,6 +1000,12 @@ Qflow.prototype.initMenu = function() {
 			 borderColor:'', 
 			 fillColor:'#fff',   
 			 drag:false, 
+			 mouseenter:function(){
+			 	this.fillColor = '#ccc'
+			 },
+			 mouseout:function(){
+			 	this.fillColor = '#fff';
+			 },
 			 mouseup:function(e,pos){ 
 			 	_this.menuLayerHide();
 			 	_this.createTmpLine(pos);
@@ -1027,8 +1030,14 @@ Qflow.prototype.initMenu = function() {
 			 borderColor:'', 
 			 fillColor:'#fff',   
 			 drag:false, 
+			 mouseenter:function(){
+			 	this.fillColor = '#ccc'
+			 },
+			 mouseout:function(){
+			 	this.fillColor = '#fff';
+			 },
 			 mouseup:function(e,pos){ 
-			 	console.log('clone');
+			 	// console.log('clone');
 			 	_this.menuLayerHide();
 
 			 	_this.cloneNode();
@@ -1057,8 +1066,14 @@ Qflow.prototype.initMenu = function() {
 			 borderColor:'', 
 			 fillColor:'#fff',   
 			 drag:false, 
+			 mouseenter:function(){
+			 	this.fillColor = '#ccc'
+			 },
+			 mouseout:function(){
+			 	this.fillColor = '#fff';
+			 },
 			 mouseup:function(e,pos){ 
-			 	console.log('删除');
+			 	// console.log('删除');
 			 	_this.menuLayerHide();
 			 	// _this.contextMenuNode = null;
 
@@ -1079,7 +1094,45 @@ Qflow.prototype.initMenu = function() {
 			pointerEvent:'none'
 		})
 
-    this.contextMenuLayer.push(area,linkRect,linkTxt,cloneRect,cloneText,delRect,delTxt);
+    var settingRect = this.qcanvas.qrect.rect({
+			 start:function(){
+
+			 	return [area.start[0],area.start[1]+75];
+			 },
+			 width:100,
+			 height:25,
+			 borderColor:'', 
+			 fillColor:'#fff',   
+			 drag:false, 
+			 mouseenter:function(){
+			 	this.fillColor = '#ccc'
+			 },
+			 mouseout:function(){
+			 	this.fillColor = '#fff';
+			 },
+			 mouseup:function(e,pos){ 
+			 	_this.contextMenuLayer.setDisplay('none');
+			 	// _this.menuLayerShow(pos);
+			 	_this.contextSettingNode = _this.contextMenuNode;
+				_this.contextSettingShow(pos);
+
+			 }
+			})
+    var settingText =  this.qcanvas.qtext.text({
+			text:'属性',
+			start:function(){
+				return [
+				_this.contextMenuLayer.elements[0].start[0]+_this.contextMenuLayer.elements[0].width*0.5,
+				_this.contextMenuLayer.elements[0].start[1]+50+75*0.5
+				];
+			},
+			fontSize:'12px',
+			color:'#000',
+			pointerEvent:'none'
+		})
+
+
+    this.contextMenuLayer.push(area,linkRect,linkTxt,cloneRect,cloneText,delRect,delTxt,settingRect,settingText);
 
 };
 Qflow.prototype.menuLayerShow = function(pos) {
@@ -1100,64 +1153,8 @@ Qflow.prototype.menuLayerHide = function() {
 	// this.contextMenuNode = null;
 	this.contextMenuLayer.setDisplay('none');
 
-};
-Qflow.prototype.initSettingIco = function() {
-	var _this = this; 
-
-	this.settingIco = this.qcanvas.qarc.arc({
-		start:[0,0],
-		sAngle:0,
-		eAngle:360,
-		borderColor:'red',
-		fillColor:'red',
-		opacity:0.5,
-		r:5,
-		display:'none',
-		drag:false,
-		mousemove:function(){
-			this.setDisplay('block');
-		},
-		mouseup:function(e,pos){ 
-			_this.contextSettingHide();
-
-			//如果取消连线关系
-			_this.delTmpLine();
-			_this.contextMenuNode = null;
-
-			_this.contextSettingNode = this.contextSettingNode;
+}; 
  
-
-			_this.qcanvas.raiseToTop(_this.contextSettingLayer);
-			// _this.contextSettingShow.call(_this.contextSettingNode,{x:this.sStart[0],y:this.sStart[1]});
-			// _this.contextSettingShow({x:this.sStart[0],y:this.sStart[1]});
-			_this.contextSettingShow(pos);
-
-
-			_this.lineMenuLayerHide();
-
-		}
-	});	
-
-
-
-};
-Qflow.prototype.settingIcoShow = function(node) {
-	// console.log('settingIcoShow');
-	var start = this.qcanvas.isFun(node.start)?node.start():node.start;
- 	var x = start[0]+node.width - 8;
-	var y = start[1]+8; 
-
-
-	this.settingIco.contextSettingNode = node;
-	// this.settingIco.setTStart([x,y]);
-	this.settingIco.setStart([x,y]);
-
-	this.settingIco.setDisplay('block');
-	this.qcanvas.raiseToTop(this.settingIco);
-};
-Qflow.prototype.settingIcoHide = function() {
-	this.settingIco.setDisplay('none');
-};
 
 
 Qflow.prototype.initContextCover = function() {
@@ -1194,7 +1191,7 @@ Qflow.prototype.contextSettingShow = function(pos) {
 
 	//删除按钮
 	// this.initDelBtn();
-
+	this.qcanvas.raiseToTop(this.contextSettingLayer);
 	this.contextSettingLayer.setDisplay('block');
 
 	// console.log(this.contextSettingLayer);
@@ -1428,7 +1425,7 @@ Qflow.prototype.updateNodeTitleColor = function(v) {
 		if(tmp.length>0){
 			return tmp[0];
 		}else{
-			console.log('没有找到');
+			// console.log('没有找到');
 			//如果没有取到  那就是在子项里
 			var tmp;
 			_this.options.initData.node.forEach(function(item){
@@ -1471,7 +1468,7 @@ Qflow.prototype.updateInitDataAttr = function(v) {
 		if(tmp.length>0){
 			return tmp[0];
 		}else{
-			console.log('没有找到');
+			// console.log('没有找到');
 			//如果没有取到  那就是在子项里
 			var tmp;
 			_this.options.initData.node.forEach(function(item){
@@ -2910,11 +2907,7 @@ Qflow.prototype.createChildsOfContainer = function(parentNode,jsonObj,index) {
 				 lineWidth:1,
 				 getRangePoints:function(){ //返回rect边上的8个点的坐标 
 				 	return _this.createRangePoints(this.polyPoints());
-				 },
-				 mouseenter:function(){ 
-					_this.settingIcoShow(this);
-
-				 },
+				 }, 
 				 mousedown:function(){ 
 				 		_this.delTmpLine();
 				 		_this.createNewLine(this,jsonObj);
@@ -2925,7 +2918,6 @@ Qflow.prototype.createChildsOfContainer = function(parentNode,jsonObj,index) {
 					 	_this.draging = true;
 				 },
 				 mouseup:function(e,pos){
-				 	_this.settingIcoHide(); 
 				 	_this.menuLayerHide();
 					
 
@@ -2949,20 +2941,14 @@ Qflow.prototype.createChildsOfContainer = function(parentNode,jsonObj,index) {
 
 				 	_this.updateTmpLineEndPos(pos);
 
-					_this.settingIcoShow(this);
 
 
 				 	_this.draging && 
 				 	_this.updateInitData.call(_this,this,jsonObj);
 
-				 },
-				 mouseout:function(){
-				 	_this.settingIcoHide(); 
-				 },
+				 }, 
 				 dblclick:function(e,pos){
 
-				 	console.log('dbl')
-				 	_this.settingIcoHide(); 
 				 	_this.menuLayerHide();
 
 				 	_this.containerDblclick.call(_this,this,e,pos,jsonObj); 
@@ -3096,15 +3082,13 @@ Qflow.prototype.containerMouseUp = function(container,e,pos,jsonObj) {
  	}
 };
 Qflow.prototype.containerDblclick = function(node,e,pos,jsonObj) {
-	console.log(jsonObj);
-	console.log(node)
+	 
 	if(jsonObj.nodeType == 'node'){
 
 		this.contextSettingNode = jsonObj;
 
 		//双击节点后 计算input的位置及宽度
 		var titleObj = this.getNodeObj(jsonObj.attr.titleId); 
-		console.log(titleObj);
 		this.modiTitleObj = titleObj; 
 
 		var tmp = titleObj.formatText.call(this,titleObj);
@@ -3166,13 +3150,13 @@ Qflow.prototype.containerDblclick = function(node,e,pos,jsonObj) {
 			},
 			]) == 'in'){
 
-			console.log('开始编辑容器标题');
+			// console.log('开始编辑容器标题');
 
 			this.contextSettingNode = jsonObj;
 
 			//双击节点后 计算input的位置及宽度
 			var titleObj = this.getNodeObj(jsonObj.attr.titleId); 
-			console.log(titleObj);
+			// console.log(titleObj);
 			this.modiTitleObj = titleObj; 
 
 			var tmp = titleObj.formatText.call(this,titleObj);
@@ -3267,7 +3251,7 @@ Qflow.prototype.isResizeCanvas = function(nodeId) {
 			if(maxX > _this.options.width || 
 				maxY > _this.options.height){
 
-				console.log('需要重置canvas尺寸');
+				// console.log('需要重置canvas尺寸');
 
 				_this.resizeCanvas(maxX>_this.options.width?maxX:_this.options.width,maxY>_this.options.height?maxY:_this.options.height);
 
@@ -3388,7 +3372,7 @@ Qflow.prototype.formatTipText = function(str) {
     // text1.setText(c.join('\n')); 
 };
 Qflow.prototype.cloneTipNode = function() {
-	console.log(this.contextMenuNode);
+	// console.log(this.contextMenuNode);
 	var jsonObj = this.getJsonObj(this.contextMenuNode.id);
 	var json = {
 			nodeType:'tip', //备注文本节点
@@ -3475,7 +3459,6 @@ Qflow.prototype.createTipNode = function(jsonObj) {
 		 	_this.containerMouseDown.call(_this,this,jsonObj); 
 		 },
 		 mouseup:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 		 	
 		 	_this.containerMouseUp.call(_this,this,e,pos,jsonObj); 
@@ -3547,9 +3530,7 @@ Qflow.prototype.createContainerOrNode = function(jsonObj) {
 		 getRangePoints:function(){ //返回rect边上的8个点的坐标 
 		 	return _this.createRangePoints(this.polyPoints());
 		 },
-		 mouseenter:function(){ 
-		 	_this.settingIcoShow(this);
-		 },
+		 
 		 mousedown:function(){ 
 
 		 	_this.delTmpLine();
@@ -3564,7 +3545,6 @@ Qflow.prototype.createContainerOrNode = function(jsonObj) {
 
 		 },
 		 mouseup:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 
 
@@ -3573,16 +3553,11 @@ Qflow.prototype.createContainerOrNode = function(jsonObj) {
 		 },
 		 mousemove:function(e,pos){
 		 	_this.updateTmpLineEndPos(pos);
-		 	_this.settingIcoShow(this);
 
 		 	_this.containerMouseMove.call(_this,this,jsonObj); 
 
-		 },
-		 mouseout:function(){
-		 	_this.settingIcoHide(); 
-		 },
+		 }, 
 		 dblclick:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 
 		 	_this.containerDblclick.call(_this,this,e,pos,jsonObj); 
@@ -3661,9 +3636,7 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 		 getRangePoints:function(){ //返回rect边上的8个点的坐标 
 		 	return _this.createRangePoints(this.polyPoints());
 		 },
-		 mouseenter:function(){ 
-		 	_this.settingIcoShow(this);
-		 },
+		 
 		 mousedown:function(){ 
 
 		 	_this.delTmpLine();
@@ -3678,7 +3651,6 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 
 		 },
 		 mouseup:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 		 	
 		 	_this.containerMouseUp.call(_this,this,e,pos,jsonObj); 
@@ -3686,16 +3658,11 @@ Qflow.prototype.addContainer = function(obj,attrObj) {
 		 },
 		 mousemove:function(e,pos){
 		 	_this.updateTmpLineEndPos(pos);
-		 	_this.settingIcoShow(this);
 
 		 	_this.containerMouseMove.call(_this,this,jsonObj); 
 
-		 },
-		 mouseout:function(){
-		 	_this.settingIcoHide(); 
-		 },
+		 }, 
 		 dblclick:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 
 		 	_this.containerDblclick.call(_this,this,e,pos,jsonObj); 
@@ -3779,7 +3746,7 @@ Qflow.prototype.modiContainerGridColumn = function(column) {
 Qflow.prototype.inSertToContainer = function(obj,aim,text) {
 	//添加节点到container
 	//根据container里的位置 初始化节点位置
-	console.log('创建的节点需要初始到容器里');
+	// console.log('创建的节点需要初始到容器里');
 
 	var parentJsonNode = this.getJsonObj(aim.id);
 	var parentNode = this.getNodeObj(aim.id);
@@ -3840,10 +3807,7 @@ Qflow.prototype.addNode = function(obj,title) {
 		 dashed:false,  
 		 getRangePoints:function(){ //返回rect边上的8个点的坐标 
 		 	return _this.createRangePoints(this.polyPoints());
-		 },
-		 mouseenter:function(){ 
-		 	_this.settingIcoShow(this);
-		 },
+		 }, 
 		 mousedown:function(){ 
 
 		 	_this.delTmpLine();
@@ -3854,7 +3818,6 @@ Qflow.prototype.addNode = function(obj,title) {
 		 	_this.containerMouseDown.call(_this,this,jsonObj); 
 		 },
 		 mouseup:function(e,pos){
-		 	_this.settingIcoHide(); 
 		 	_this.menuLayerHide();
 		 	
 		 	_this.containerMouseUp.call(_this,this,e,pos,jsonObj); 
@@ -3862,18 +3825,13 @@ Qflow.prototype.addNode = function(obj,title) {
 		 },
 		 mousemove:function(e,pos){
 		 	_this.updateTmpLineEndPos(pos);
-		 	_this.settingIcoShow(this);
 
 		 	_this.containerMouseMove.call(_this,this,jsonObj); 
 
-		 },
-		 mouseout:function(){
-		 	_this.settingIcoHide(); 
-		 },
+		 }, 
 		 dblclick:function(e,pos){
 
-		 	console.log('dbl')
-		 	_this.settingIcoHide(); 
+		 	// console.log('dbl')
 		 	_this.menuLayerHide();
 
 		 	_this.containerDblclick.call(_this,this,e,pos,jsonObj); 
@@ -3956,7 +3914,7 @@ Qflow.prototype.inContainer = function(obj) {
 	var aim = null;
 	for (var i = ele.length - 1; i >= 0; i--) {
 		if(ele[i].display !='none' && ele[i].TYPE !='layer' && this.rayCasting({x:obj.x,y:obj.y},ele[i].polyPoints()) == 'in'){
-			console.log('找到了');
+			// console.log('找到了');
 			aim = ele[i];
 			break;
 		}
@@ -4023,7 +3981,6 @@ Qflow.prototype.addEle = function(obj) {
 
 };
 Qflow.prototype.canvasUpFun = function() {
-	console.log('canvasUpFun');
 
 
 	//如果是拖动完后 需要把this.baseNodesWithCoordinates中的对象的坐标数据同步到静态json数据中
