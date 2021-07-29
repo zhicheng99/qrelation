@@ -377,6 +377,20 @@ Qflow.prototype.initLineColorRect = function() {
 			mouseup:function(){
 
 				_this.contextLineMenuNode.setColor(this.fillColor);
+				console.log(_this.contextLineMenuNode)
+
+				//如果是折线
+				var self = this;
+				if(typeof _this.contextLineMenuNode.relationLineId != 'undefined'){
+					_this.contextLineMenuNode.relationLineId.forEach(function(item){
+
+						// var obj = _this
+						var obj = _this.lineLayer.getEleById(item);
+						obj.setColor(self.fillColor);
+
+					})
+				}
+
 
 				var json = _this.getLineJsonByNodeId(_this.contextLineMenuNode.id);
 			  	json.attr.color = this.fillColor;
