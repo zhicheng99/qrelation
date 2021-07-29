@@ -99,7 +99,7 @@ function Qflow(options){
 
 	this.init();
 
-	// console.log(this.qcanvas.elements);
+	console.log(this.qcanvas.elements);
  
 }
 Qflow.prototype.init = function() {
@@ -814,8 +814,8 @@ Qflow.prototype.delNode = function() {
 		delNodeObj.push(this.getNodeObj(nodeJson.nodeId));
 
 	}
-	// console.log('需要删除的node');
-	// console.log(delNodeObj);
+	console.log('需要删除的node');
+	console.log(delNodeObj);
 
 	var delLineObj = this.getDelLineObj(delNodeObj); //连线对象(在this.lineLayer上)
 	// var delWithTextObj = this.getWithTextObj(delLineObj); //连线上的文字对象（在this.lineLayer上）
@@ -917,7 +917,7 @@ Qflow.prototype.delNode = function() {
 			_this.lineLayer.removeEleById(item.ownerId);
 		} 
 
-		//tip类型删除
+		//tip类型或node类型删除
 		if(typeof item.withTextId !=='undefined'){
 			_this.qcanvas.removeEleById(item.withTextId);
 		}
@@ -2825,6 +2825,7 @@ Qflow.prototype.initNodeTitle = function(jsonObj,nodeObj) {
 		})
 
 	this.qnodes.push(t);
+	nodeObj.withTextId = t.id;
 	jsonObj.attr.titleId = t.id;
 
 
@@ -2852,7 +2853,7 @@ Qflow.prototype.initContainerTitle = function(obj,qobj) {
 			})
 
 		this.qnodes.push(t);
-
+		qobj.withTextId = t.id;
 		//标题节点的id记到container节点json数据上
 		obj.attr.titleId = t.id;
  
