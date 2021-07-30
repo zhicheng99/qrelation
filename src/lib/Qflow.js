@@ -2583,7 +2583,10 @@ Qflow.prototype.initLink = function() {
 			case "foldLine1":  //横向折线
 			case "foldLine2":  //竖向折线
 				//折线是三条线 所以这里返回一个数组
-				var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
+				// var tmp = _this.createFoldLine(item.fromNode,item.toNode,item.attr);
+				var tmp = _this.createFoldLineNew(item.fromNode,item.toNode,item.attr);
+
+				
 			break;
 		}
 
@@ -2678,19 +2681,180 @@ Qflow.prototype.caleFoldLinePosition = function(fromNode,toNode,attr,id){
        
 }
 
+Qflow.prototype.createFoldType1 = function(fromNode,toNode,attr){
+	var _this = this;
+    var percent = attr.disPercent?attr.disPercent:0.5;
+
+	var line2 = this.qcanvas.qline.line({
+        start:function(){
+            
+            //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
+            // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
+            // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
+            var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            this.a_pos = pos.start;
+            this.b_pos = pos.end;
+
+            this.dis_y = Math.abs(this.a_pos[1]-this.b_pos[1]);
+            this.min_y = Math.min.call(null,this.a_pos[1],this.b_pos[1]); 
+
+            return  [this.a_pos[0],this.dis_y*percent+this.min_y]
+            
+             
+        },
+        end:function(){ return [this.b_pos[0],this.dis_y*percent+this.min_y]},
+        // pointerEvent:'none',
+        drag:false,
+        width:1,
+		like:_this.line2Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+		withText:attr.text,
+		mouseup:function(e,pos){
+				//右击显示菜单
+				if(e.button == '2'){ 
+
+					_this.contextLineMenuNode = this;
+
+					_this.qcanvas.raiseToTop(_this.contextLineMenuLayer);
+					_this.initLineMenu(pos);
+					_this.lineMenuLayerShow();
+		
+					_this.contextSettingHide();
+
+				}
+
+			},
+
+        //在start中重置以下自定义属性---
+        a_pos:[],
+        b_pos:[],
+        dis_y:0,
+        min_y:0
+        //------------------
+    })
+
+    var line1 = this.qcanvas.qline.line({
+        start:function(){return line2.a_pos},  
+        end:function(){  return [line2.a_pos[0],line2.dis_y*percent+line2.min_y]},
+        pointerEvent:'none',
+        like:_this.line1Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+    })
+
+    var line3 = this.qcanvas.qline.line({
+        start:function(){ return [line2.b_pos[0],line2.dis_y*percent+line2.min_y]},
+        end:function(){ return line2.b_pos},
+        pointerEvent:'none',
+        width:1,
+        like:_this.line3Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+    })
+
+ //    //做关联
+	line2.relationLineId = [line1.id,line3.id];
+
+
+	return [line1,line2,line3];
+
+}
+
+Qflow.prototype.createFoldType2 = function(fromNode,toNode,attr){
+var _this = this;
+    var percent = attr.disPercent?attr.disPercent:0.5;
+
+	var line2 = this.qcanvas.qline.line({
+        start:function(){
+            
+            //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
+            // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
+            // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
+            var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            this.a_pos = pos.start;
+            this.b_pos = pos.end;
+
+            this.dis_x = Math.abs(this.a_pos[0]-this.b_pos[0]);
+            this.min_x = Math.min.call(null,this.a_pos[0],this.b_pos[0]); 
+
+            return  [this.dis_x*percent+this.min_x,this.a_pos[1]]
+            
+             
+        },
+        end:function(){ return [this.dis_x*percent+this.min_x,this.b_pos[1]]},
+        // pointerEvent:'none',
+        drag:false,
+        width:1,
+		like:_this.line2Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+		withText:attr.text,
+		mouseup:function(e,pos){
+				//右击显示菜单
+				if(e.button == '2'){ 
+
+					_this.contextLineMenuNode = this;
+
+					_this.qcanvas.raiseToTop(_this.contextLineMenuLayer);
+					_this.initLineMenu(pos);
+					_this.lineMenuLayerShow();
+		
+					_this.contextSettingHide();
+
+				}
+
+			},
+
+        //在start中重置以下自定义属性---
+        a_pos:[],
+        b_pos:[],
+        dis_x:0,
+        min_x:0
+        //------------------
+    })
+
+    var line1 = this.qcanvas.qline.line({
+        start:function(){return line2.a_pos},  
+        end:function(){  return [line2.dis_x*percent+line2.min_x,line2.a_pos[1]]},
+        pointerEvent:'none',
+        like:_this.line1Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+    })
+
+    var line3 = this.qcanvas.qline.line({
+        start:function(){ return [line2.dis_x*percent+line2.min_x,line2.b_pos[1]]},
+        end:function(){ return line2.b_pos},
+        pointerEvent:'none',
+        width:1,
+        like:_this.line3Like[attr.like],
+		color:attr.color?attr.color:_this.lineColor,
+    })
+
+ //    //做关联
+	line2.relationLineId = [line1.id,line3.id];
+
+
+	return [line1,line2,line3];
+}
+
+Qflow.prototype.createFoldLineNew = function(fromNode,toNode,attr){ 
+
+	if(attr.type == 'foldLine1'){ //横向模式
+		return	this.createFoldType1(fromNode,toNode,attr)
+	}
+
+	if(attr.type == 'foldLine2'){ //竖向模式
+		return this.createFoldType2(fromNode,toNode,attr)
+	}
+
+}
+
 /**
- * 创建折线
+ * 创建折线  不用了  性能太差
  * @param  {[type]} fromNode [description]
  * @param  {[type]} toNode   [description]
  * @param  {[type]} lineId   [description]
  * @return {[type]}          [description]
  */
-Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){
-	// var foldLinePostions = this.caleFoldLinePosition(fromNode,toNode);
+Qflow.prototype.createFoldLine = function(fromNode,toNode,attr){ 
 
-	// console.log(foldLinePostions.l1());
-	// console.log(foldLinePostions.l2());
-	// console.log(foldLinePostions.l3());
 	var _this = this;
 	var tmp = null;
 
