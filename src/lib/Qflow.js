@@ -2763,23 +2763,42 @@ var _this = this;
     var percent = attr.disPercent?attr.disPercent:0.5;
 
 	var line2 = this.qcanvas.qline.line({
-        start:function(){
+        // start:function(){
             
-            //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
-            // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
-            // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
-            var pos = _this.calcLinePos(fromNode,toNode,this.id);
-            this.a_pos = pos.start;
-            this.b_pos = pos.end;
+        //     //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
+        //     // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
+        //     // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
+        //     var pos = _this.calcLinePos(fromNode,toNode,this.id);
+        //     this.a_pos = pos.start;
+        //     this.b_pos = pos.end;
 
-            this.dis_x = Math.abs(this.a_pos[0]-this.b_pos[0]);
-            this.min_x = Math.min.call(null,this.a_pos[0],this.b_pos[0]); 
+        //     this.dis_x = Math.abs(this.a_pos[0]-this.b_pos[0]);
+        //     this.min_x = Math.min.call(null,this.a_pos[0],this.b_pos[0]); 
 
-            return  [this.dis_x*percent+this.min_x,this.a_pos[1]]
+        //     return  [this.dis_x*percent+this.min_x,this.a_pos[1]]
             
              
+        // },
+        // end:function(){ return [this.dis_x*percent+this.min_x,this.b_pos[1]]},
+        start:function(){
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+            return  [dis_x*percent+min_x,a_pos[1]];
+
         },
-        end:function(){ return [this.dis_x*percent+this.min_x,this.b_pos[1]]},
+        end:function(){
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+			return [dis_x*percent+min_x,b_pos[1]];
+        },
         // pointerEvent:'none',
         drag:false,
         width:1,
@@ -2803,24 +2822,64 @@ var _this = this;
 			},
 
         //在start中重置以下自定义属性---
-        a_pos:[],
-        b_pos:[],
-        dis_x:0,
-        min_x:0
+        // a_pos:[],
+        // b_pos:[],
+        // dis_x:0,
+        // min_x:0
         //------------------
     })
 
     var line1 = this.qcanvas.qline.line({
-        start:function(){return line2.a_pos},  
-        end:function(){  return [line2.dis_x*percent+line2.min_x,line2.a_pos[1]]},
+        // start:function(){return line2.a_pos},  
+        // end:function(){  return [line2.dis_x*percent+line2.min_x,line2.a_pos[1]]},
+        start:function(){
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            // var b_pos = pos.end;
+
+            // var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            // var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+            return a_pos;
+        },
+        end:function(){
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+            return [dis_x*percent+min_x,a_pos[1]];
+        },
         pointerEvent:'none',
         like:_this.line1Like[attr.like],
 		color:attr.color?attr.color:_this.lineColor,
     })
 
     var line3 = this.qcanvas.qline.line({
-        start:function(){ return [line2.dis_x*percent+line2.min_x,line2.b_pos[1]]},
-        end:function(){ return line2.b_pos},
+        // start:function(){ return [line2.dis_x*percent+line2.min_x,line2.b_pos[1]]},
+        // end:function(){ return line2.b_pos},
+        start:function(){
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+
+			return [dis_x*percent+min_x,b_pos[1]];
+        },
+        end:function(){
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            // var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            // var dis_x = Math.abs(a_pos[0]-b_pos[0]);
+            // var min_x = Math.min.call(null,a_pos[0],b_pos[0]); 
+
+            return b_pos;
+
+        },
         pointerEvent:'none',
         width:1,
         like:_this.line3Like[attr.like],
