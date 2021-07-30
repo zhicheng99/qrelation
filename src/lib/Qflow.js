@@ -2683,26 +2683,50 @@ Qflow.prototype.caleFoldLinePosition = function(fromNode,toNode,attr,id){
 
 Qflow.prototype.createFoldType1 = function(fromNode,toNode,attr){
 	var _this = this;
-    var percent = attr.disPercent?attr.disPercent:0.5;
+    // var percent = attr.disPercent?attr.disPercent:0.5;
 
 	var line2 = this.qcanvas.qline.line({
-        start:function(){
+        // start:function(){
             
-            //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
-            // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
-            // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
-            var pos = _this.calcLinePos(fromNode,toNode,this.id);
-            this.a_pos = pos.start;
-            this.b_pos = pos.end;
+        //     //需要计算的参数都记到该line对象中 //只要有一个计算就可以了
+        //     // this.a_pos = qcanvas.isFun(a.start)?a.start():a.start;
+        //     // this.b_pos = qcanvas.isFun(b.start)?b.start():b.start; 
+        //     var pos = _this.calcLinePos(fromNode,toNode,this.id);
+        //     this.a_pos = pos.start;
+        //     this.b_pos = pos.end;
 
-            this.dis_y = Math.abs(this.a_pos[1]-this.b_pos[1]);
-            this.min_y = Math.min.call(null,this.a_pos[1],this.b_pos[1]); 
+        //     this.dis_y = Math.abs(this.a_pos[1]-this.b_pos[1]);
+        //     this.min_y = Math.min.call(null,this.a_pos[1],this.b_pos[1]); 
 
-            return  [this.a_pos[0],this.dis_y*percent+this.min_y]
+        //     return  [this.a_pos[0],this.dis_y*percent+this.min_y]
             
              
+        // },
+        // end:function(){ return [this.b_pos[0],this.dis_y*percent+this.min_y]},
+        start:function(){
+		    var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            var min_y = Math.min.call(null,a_pos[1],b_pos[1]); 
+            return  [a_pos[0],dis_y*percent+min_y];
+
         },
-        end:function(){ return [this.b_pos[0],this.dis_y*percent+this.min_y]},
+        end:function(){
+
+        	var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            var min_y = Math.min.call(null,a_pos[1],b_pos[1]); 
+			return [b_pos[0],dis_y*percent+min_y]
+        },
         // pointerEvent:'none',
         drag:false,
         width:1,
@@ -2726,16 +2750,38 @@ Qflow.prototype.createFoldType1 = function(fromNode,toNode,attr){
 			},
 
         //在start中重置以下自定义属性---
-        a_pos:[],
-        b_pos:[],
-        dis_y:0,
-        min_y:0
+        // a_pos:[],
+        // b_pos:[],
+        // dis_y:0,
+        // min_y:0
         //------------------
     })
 
     var line1 = this.qcanvas.qline.line({
-        start:function(){return line2.a_pos},  
-        end:function(){  return [line2.a_pos[0],line2.dis_y*percent+line2.min_y]},
+        // start:function(){return line2.a_pos},  
+        // end:function(){  return [line2.a_pos[0],line2.dis_y*percent+line2.min_y]},
+        start:function(){
+        	// var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            // var b_pos = pos.end;
+
+            // var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            // var min_y = Math.min.call(null,a_pos[1],b_pos[1]); 
+            return a_pos;
+        },
+        end:function(){
+        	var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            var min_y = Math.min.call(null,a_pos[1],b_pos[1]); 
+            return [a_pos[0],dis_y*percent+min_y]
+        },
         pointerEvent:'none',
         like:_this.line1Like[attr.like],
 		color:attr.color?attr.color:_this.lineColor,
@@ -2744,6 +2790,29 @@ Qflow.prototype.createFoldType1 = function(fromNode,toNode,attr){
     var line3 = this.qcanvas.qline.line({
         start:function(){ return [line2.b_pos[0],line2.dis_y*percent+line2.min_y]},
         end:function(){ return line2.b_pos},
+        start:function(){
+        	var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            var min_y = Math.min.call(null,a_pos[1],b_pos[1]);
+
+			return [b_pos[0],dis_y*percent+min_y];
+        },
+        end:function(){
+        	// var percent = attr.disPercent?attr.disPercent:0.5;
+
+        	var pos = _this.calcLinePos(fromNode,toNode,this.id);
+            // var a_pos = pos.start;
+            var b_pos = pos.end;
+
+            // var dis_y = Math.abs(a_pos[1]-b_pos[1]);
+            // var min_y = Math.min.call(null,a_pos[1],b_pos[1]);
+            return b_pos
+        },
         pointerEvent:'none',
         width:1,
         like:_this.line3Like[attr.like],
@@ -2760,7 +2829,7 @@ Qflow.prototype.createFoldType1 = function(fromNode,toNode,attr){
 
 Qflow.prototype.createFoldType2 = function(fromNode,toNode,attr){
 var _this = this;
-    var percent = attr.disPercent?attr.disPercent:0.5;
+    // var percent = attr.disPercent?attr.disPercent:0.5;
 
 	var line2 = this.qcanvas.qline.line({
         // start:function(){
@@ -2781,6 +2850,8 @@ var _this = this;
         // },
         // end:function(){ return [this.dis_x*percent+this.min_x,this.b_pos[1]]},
         start:function(){
+		    var percent = attr.disPercent?attr.disPercent:0.5;
+
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             var a_pos = pos.start;
             var b_pos = pos.end;
@@ -2791,6 +2862,8 @@ var _this = this;
 
         },
         end:function(){
+		    var percent = attr.disPercent?attr.disPercent:0.5;
+
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             var a_pos = pos.start;
             var b_pos = pos.end;
@@ -2833,6 +2906,8 @@ var _this = this;
         // start:function(){return line2.a_pos},  
         // end:function(){  return [line2.dis_x*percent+line2.min_x,line2.a_pos[1]]},
         start:function(){
+		    // var percent = attr.disPercent?attr.disPercent:0.5;
+
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             var a_pos = pos.start;
             // var b_pos = pos.end;
@@ -2842,6 +2917,8 @@ var _this = this;
             return a_pos;
         },
         end:function(){
+		    var percent = attr.disPercent?attr.disPercent:0.5;
+
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             var a_pos = pos.start;
             var b_pos = pos.end;
@@ -2859,6 +2936,8 @@ var _this = this;
         // start:function(){ return [line2.dis_x*percent+line2.min_x,line2.b_pos[1]]},
         // end:function(){ return line2.b_pos},
         start:function(){
+		    var percent = attr.disPercent?attr.disPercent:0.5;
+
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             var a_pos = pos.start;
             var b_pos = pos.end;
@@ -2869,6 +2948,7 @@ var _this = this;
 			return [dis_x*percent+min_x,b_pos[1]];
         },
         end:function(){
+		    // var percent = attr.disPercent?attr.disPercent:0.5;
 
         	var pos = _this.calcLinePos(fromNode,toNode,this.id);
             // var a_pos = pos.start;
