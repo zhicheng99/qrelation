@@ -3362,6 +3362,7 @@ Qflow.prototype.containerMouseDown = function(container,jsonObj) {
  	_this.draging = true;
 };
 Qflow.prototype.containerMouseUp = function(container,e,pos,jsonObj) {
+	console.log(jsonObj);
 	var _this = this;
 	_this.draging = false;
 
@@ -3567,8 +3568,7 @@ Qflow.prototype.isResizeCanvas = function(nodeId) {
 
 			if(maxX > _this.options.width || 
 				maxY > _this.options.height){
-
-				// console.log('需要重置canvas尺寸');
+ 
 
 				_this.resizeCanvas(maxX>_this.options.width?maxX:_this.options.width,maxY>_this.options.height?maxY:_this.options.height);
 
@@ -4298,10 +4298,32 @@ Qflow.prototype.addEle = function(obj) {
 
 };
 Qflow.prototype.canvasUpFun = function() {
-
+	var _this = this;
 
 	//如果是拖动完后 需要把this.baseNodesWithCoordinates中的对象的坐标数据同步到静态json数据中
 	
+
+	//判断是否需要放大画布
+	var wTmp = [];
+	var hTmp = [];
+	this.baseNodesWithCoordinates.forEach(function(item){
+
+		var start = _this.qcanvas.isFun(item.start)?item.start():item.start;
+		wTmp.push(start[0]+item.width);
+		hTmp.push(start[1]+item.height);
+
+	})
+
+	var maxX = Math.max.apply(null,wTmp);
+	var maxY = Math.max.apply(null,hTmp);
+ 
+	if(maxX > this.options.width || 
+		maxY > this.options.height){
+
+		this.resizeCanvas(maxX>this.options.width?maxX:this.options.width,maxY>this.options.height?maxY:this.options.height);
+
+	}
+
 
 };
 Qflow.prototype.canvasMoveFun = function(e,pos) { 
