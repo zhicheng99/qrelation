@@ -51,9 +51,12 @@
 		    title="json数据"
 		    :visible.sync="show"
 		    width="30%"
+		    :custom-class="'codeView'"
 		    @close="close">
 		    <div class="json_lay">
-		    	{{json}}
+		    	<!-- {{json}} -->
+			          <JsonView v-if="show"  :json="returnObj()" class="JsonView"></JsonView>
+
 		    </div>
 		    
 		</el-dialog>
@@ -67,12 +70,13 @@ import Vue from 'vue';
 	import {Drag} from './lib/Drag.js'; 
 	import {Qflow} from './lib/Qflow.js';
 
+	import JsonView from './JsonView.vue';
 
 	var qflow;
 
 	export default{
 		name:"qrelation",
-		components:{},
+		components:{JsonView},
 		props:['initWidth','initHeight','jsonData','saveFun'],
 		data(){
 			return {
@@ -150,6 +154,9 @@ import Vue from 'vue';
 		  }
 		},
 		methods:{
+			returnObj:function(){
+				return JSON.parse(this.json);
+			},
 			onSubmit:function(){
 		  		qflow.contextSettingHide();
 		  	},
@@ -370,4 +377,10 @@ import Vue from 'vue';
 		    resize:none;
 		    /*pointer-events: none;*/
 		}
+
+</style>
+<style>
+	.codeView .el-dialog__body{
+	padding:5px;
+}
 </style>
