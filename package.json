@@ -1,6 +1,6 @@
 {
   "name": "qrelation",
-  "version": "1.0.131",
+  "version": "1.0.132",
   "description": "",
   "main": "./dist/qrelation.js",
   "scripts": {
