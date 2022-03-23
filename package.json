@@ -13,7 +13,6 @@
   "author": "alexmh",
   "license": "ISC",
   "dependencies": {
-    "element-ui": "^2.13.0",
     "qcanvas": "^1.0.96",
     "vue": "^2.5.11"
   },
@@ -29,6 +28,7 @@
     "copy-webpack-plugin": "^4.6.0",
     "cross-env": "^5.0.5",
     "css-loader": "^0.28.7",
+    "element-ui": "^2.13.0",
     "eventsource-polyfill": "^0.9.6",
     "extract-text-webpack-plugin": "^2.0.0",
     "file-loader": "^1.1.4",
@@ -42,6 +42,7 @@
     "style-loader": "^0.23.1",
     "stylus": "^0.54.5",
     "stylus-loader": "^3.0.2",
+    "uglifyjs-webpack-plugin": "^1.3.0",
     "url-loader": "^0.5.8",
     "vue-loader": "^13.0.5",
     "vue-template-compiler": "^2.4.4",

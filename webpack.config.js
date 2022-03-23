@@ -1,5 +1,6 @@
 var path = require('path')
 var webpack = require('webpack')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -13,7 +14,19 @@ module.exports = {
     libraryTarget: 'umd', // 指定输出格式
     umdNamedDefine: true // 会对 UMD 的构建过程中的 AMD 模块进行命名。否则就使用匿名的 define
   },
-
+  plugins:[
+     new UglifyJsPlugin({
+              uglifyOptions: {
+                  compress: {
+                      warnings: false,
+                      drop_debugger: false,
+                      drop_console: false
+                  }
+              },
+              sourceMap: false,
+              parallel: true 
+            }),
+  ],
   module: {
     rules: [
       {

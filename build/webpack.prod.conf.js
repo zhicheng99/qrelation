@@ -8,6 +8,7 @@ var CopyWebpackPlugin = require('copy-webpack-plugin')
 var HtmlWebpackPlugin = require('html-webpack-plugin')
 var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var OptimizeCSSPlugin = require('optimize-css-assets-webpack-plugin')
+const UglifyJsPlugin = require('uglifyjs-webpack-plugin');
 
 var env = config.build.env
 
@@ -29,16 +30,29 @@ var webpackConfig = merge(baseWebpackConfig, {
     new webpack.DefinePlugin({
       'process.env': env
     }),
-    new webpack.optimize.UglifyJsPlugin({
-      compress: {
-        warnings: false
-      },
-      sourceMap: true,
-	  // 处理 IOS10 白屏
-	   mangle: {
-	  	safari10: true
-	   }
-    }),
+   //  new webpack.optimize.UglifyJsPlugin({
+   //    compress: {
+   //      warnings: false
+   //    },
+   //    sourceMap: true,
+	  // // 处理 IOS10 白屏
+	  //  mangle: {
+	  // 	safari10: true
+	  //  }
+   //  }),
+    new UglifyJsPlugin({
+              uglifyOptions: {
+                  compress: {
+                      warnings: false,
+                      drop_debugger: false,
+                      drop_console: false
+                  }
+              },
+              sourceMap: false,
+              parallel: true 
+            }),
+
+    
     // extract css into its own file
     new ExtractTextPlugin({
       filename: utils.assetsPath('css/[name].[contenthash].css')
