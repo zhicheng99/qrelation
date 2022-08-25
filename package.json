@@ -13,7 +13,7 @@
   "author": "alexmh",
   "license": "ISC",
   "dependencies": {
-    "qcanvas": "^1.0.96",
+    "qcanvas": "^1.0.97",
     "vue": "^2.5.11"
   },
   "devDependencies": {

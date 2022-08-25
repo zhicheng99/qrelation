@@ -3,8 +3,8 @@
 
     <qrelation
       v-if="jsonData!==null"
-      v-bind:init-width="'1000'"
-      v-bind:init-height="'1000'"
+      v-bind:init-width="'200'"
+      v-bind:init-height="'500'"
       v-bind:json-data="jsonData"
       v-bind:save-fun="save"
       ></qrelation>
@@ -138,4 +138,8 @@ export default {
 </script>
 
 <style>
+body{
+  padding:0;
+  margin:0;
+}
 </style>

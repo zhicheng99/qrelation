@@ -4316,6 +4316,9 @@ Qflow.prototype.canvasUpFun = function() {
 
 	var maxX = Math.max.apply(null,wTmp);
 	var maxY = Math.max.apply(null,hTmp);
+
+	// console.log('maxX:'+maxX);
+	// console.log('maxY:'+maxY);
  
 	if(maxX > this.options.width || 
 		maxY > this.options.height){
